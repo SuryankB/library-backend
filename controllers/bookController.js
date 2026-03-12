@@ -3,7 +3,13 @@ const Book = require("../models/Book")
 exports.addBook = async(req,res,next)=>{
 try{
 
-const book = await Book.create(req.body)
+const data = req.body
+
+data.availableCopies = data.totalCopies
+
+data.status = data.availableCopies > 0 ? "Available" : "Checked Out"
+
+const book = await Book.create(data)
 
 res.status(201).json(book)
 
