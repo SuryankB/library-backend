@@ -1,0 +1,15 @@
+POST http://localhost:5000/api/books
+Content-Type: application/json
+
+{
+"title": "Artificial Intelligence",
+"author": "Stuart Russell",
+"isbn": "9780136042594",
+"genre": "Technology",
+"publisher": "Pearson",
+"publicationYear": 2010,
+"totalCopies": 5,
+"availableCopies": 5,
+"shelfLocation": "A12",
+"bookType": "Circulating"
+}
