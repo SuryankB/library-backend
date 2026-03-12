@@ -6,11 +6,14 @@ try{
 
 const data = req.body
 
-// set available copies equal to total copies
+// ensure numbers
+data.totalCopies = Number(data.totalCopies)
+
+// available copies = total copies initially
 data.availableCopies = data.totalCopies
 
-// initial status
-data.status = "Available"
+// correct status
+data.status = data.availableCopies > 0 ? "Available" : "Issued"
 
 const book = await Book.create(data)
 
@@ -57,9 +60,14 @@ try{
 
 const data = req.body
 
-// update status automatically
+// update available copies logic
 if(data.availableCopies !== undefined){
+
+data.availableCopies = Number(data.availableCopies)
+
+// update status automatically
 data.status = data.availableCopies > 0 ? "Available" : "Issued"
+
 }
 
 const book = await Book.findByIdAndUpdate(
@@ -92,7 +100,7 @@ next(error)
 }
 }
 
-// Search Book by Title
+// Search Book (ID / Title / Author)
 exports.searchBook = async (req, res, next) => {
 try {
 
@@ -102,29 +110,13 @@ if(!query){
 return res.status(400).json({message:"Search query required"})
 }
 
-let books
-
-// if query looks like MongoDB ID
-if(query.length === 24){
-
-books = await Book.find({
+const books = await Book.find({
 $or:[
 {_id: query},
 {title:{$regex:query,$options:"i"}},
 {author:{$regex:query,$options:"i"}}
 ]
 })
-
-}else{
-
-books = await Book.find({
-$or:[
-{title:{$regex:query,$options:"i"}},
-{author:{$regex:query,$options:"i"}}
-]
-})
-
-}
 
 res.status(200).json(books)
 
