@@ -1,26 +1,28 @@
 const Book = require("../models/Book")
 
-// Add Book
 exports.addBook = async(req,res,next)=>{
 try{
 
 const data = req.body
 
-// ensure numbers
 data.totalCopies = Number(data.totalCopies)
 
-// available copies = total copies initially
+if(data.totalCopies < 1){
+return res.status(400).json({
+message:"Total copies must be greater than 0"
+})
+}
+
 data.availableCopies = data.totalCopies
 
-// correct status
-data.status = data.availableCopies > 0 ? "Available" : "Issued"
+data.status = "Available"
 
 const book = await Book.create(data)
 
 res.status(201).json(book)
 
 }catch(error){
-next(error)
+res.status(500).json({message:error.message})
 }
 }
 
